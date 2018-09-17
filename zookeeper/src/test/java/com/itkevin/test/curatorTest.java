@@ -66,10 +66,9 @@ public class curatorTest {
                         distributeLock.unlock();
                     }
                 }
-
             }).start();
         }
-        System.in.read();
+        System.in.read();//程序卡住，等待各个线程执行完毕
     }
 
     @Test

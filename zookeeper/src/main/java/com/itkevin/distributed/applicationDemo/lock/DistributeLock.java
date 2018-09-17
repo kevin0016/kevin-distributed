@@ -3,13 +3,9 @@ package com.itkevin.distributed.applicationDemo.lock;
 import com.itkevin.distributed.applicationDemo.lock.curator.CuratorClientUtils;
 import com.itkevin.distributed.applicationDemo.lock.curator.LockWatcher;
 import org.apache.curator.framework.CuratorFramework;
-import org.apache.curator.framework.recipes.cache.NodeCache;
-import org.apache.curator.framework.recipes.cache.PathChildrenCache;
 import org.apache.zookeeper.CreateMode;
-import org.apache.zookeeper.data.Stat;
 
 import java.util.List;
-import java.util.Random;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.CountDownLatch;
@@ -38,7 +34,6 @@ public class DistributeLock {
         this.sessionTimeout = CuratorClientUtils.SESSIONTIMEOUT;
         this.curatorFramework = CuratorClientUtils.getInstance();
     }
-
 
     //获取锁的方法
     public boolean lock() {
