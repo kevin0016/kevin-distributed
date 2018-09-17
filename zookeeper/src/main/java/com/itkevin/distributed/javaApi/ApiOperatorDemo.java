@@ -1,6 +1,5 @@
 package com.itkevin.distributed.javaApi;
 
-import com.itkevin.distributed.zkclient.ZkClientApiOperatorDemo;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.ACL;
 import org.apache.zookeeper.data.Id;

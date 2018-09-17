@@ -8,11 +8,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 腾讯课堂搜索 咕泡学院
- * 加群获取视频：608583947
- * 风骚的Michael 老师
- */
 public class ZkClientApiOperatorDemo {
 
     private final static String CONNECTSTRING="111.231.94.46:2181";
@@ -24,11 +19,11 @@ public class ZkClientApiOperatorDemo {
     public static void main(String[] args) throws InterruptedException, IOException {
         ZkClient zkClient=getInstance();
         //zkclient 提供递归创建父节点的功能
-        zkClient.createPersistent("/zkclient/zkclient1/zkclient1-1/zkclient1-1-1",true);
+        zkClient.createPersistent("/node/zkclient1/zkclient1-1/zkclient1-1-1",true);
         System.out.println("success");
         System.in.read();
         //删除节点
-//        zkClient.deleteRecursive("/zkclient");
+        zkClient.deleteRecursive("/zkclient");
 
 
         //获取子节点
