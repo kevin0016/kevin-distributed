@@ -1,4 +1,4 @@
-package com.itkevin.distributed;
+package com.itkevin.distributed.base;
 
 /**
  * @Auther: liangxuekai

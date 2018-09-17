@@ -1,4 +1,4 @@
-package com.itkevin.distributed.curator;
+package com.itkevin.distributed.base.curator;
 
 import com.google.common.collect.Lists;
 import org.apache.curator.framework.CuratorFramework;

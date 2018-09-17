@@ -1,4 +1,4 @@
-package com.itkevin.distributed.curator;
+package com.itkevin.distributed.base.curator;
 
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.api.BackgroundCallback;

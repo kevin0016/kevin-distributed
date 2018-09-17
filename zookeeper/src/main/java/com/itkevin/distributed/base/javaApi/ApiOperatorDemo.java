@@ -1,4 +1,4 @@
-package com.itkevin.distributed.javaApi;
+package com.itkevin.distributed.base.javaApi;
 
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.ACL;

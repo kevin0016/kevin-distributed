@@ -1,4 +1,4 @@
-package com.itkevin.distributed.zkclient;
+package com.itkevin.distributed.base.zkclient;
 
 import org.I0Itec.zkclient.ZkClient;
 
