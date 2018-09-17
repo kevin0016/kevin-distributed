@@ -28,12 +28,13 @@ public class CuratorEventDemo {
                 forPath("/curator/curator1/curator11", "123".getBytes());
         System.out.println(result);*/
         //节点变化NodeCache
-
+        curatorFramework.delete().forPath("/curator");
         NodeCache nodeCache = new NodeCache(curatorFramework, "/curator", false);
         nodeCache.start(true);
         nodeCache.getListenable().addListener(() -> System.out.println("节点数据发生变化,变化后的结果" +
                 "：" + new String(nodeCache.getCurrentData().getData())));
-
+        nodeCache.getListenable().removeListener(() -> System.out.println("节点数据发生删除,变化后的结果" +
+                "：" + new String(nodeCache.getCurrentData().getData())));
         curatorFramework.setData().forPath("/curator", "kevin".getBytes());
         System.in.read();
 

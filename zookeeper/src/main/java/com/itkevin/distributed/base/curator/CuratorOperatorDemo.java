@@ -48,7 +48,7 @@ public class CuratorOperatorDemo {
             e.printStackTrace();
         }
 
-        //跟新
+        //更新
         try {
             Stat stat = curatorFramework.setData().forPath("/curator", "123".getBytes());
             System.out.println(stat);
