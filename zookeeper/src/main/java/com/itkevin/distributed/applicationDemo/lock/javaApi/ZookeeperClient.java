@@ -1,4 +1,4 @@
-package com.itkevin.distributed.applicationDemo.lock.javaapilock;
+package com.itkevin.distributed.applicationDemo.lock.javaApi;
 
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
