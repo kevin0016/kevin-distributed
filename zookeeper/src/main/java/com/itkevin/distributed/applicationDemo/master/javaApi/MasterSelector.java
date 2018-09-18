@@ -8,7 +8,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MasterSelector {
+public class MasterSelector  implements Watcher{
 
     private final static String MASTER_PATH = "/master"; //需要争抢的节点
     ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
@@ -24,6 +24,8 @@ public class MasterSelector {
         this.zooKeeper = zooKeeper;
     }
 
+    public MasterSelector() {
+    }
 
     public void start() {
         //开始选举
@@ -44,15 +46,16 @@ public class MasterSelector {
 
     private void chooseMaster() {
         if (!isRunning) {
-            System.out.println("当前服务没有启动");
+            System.out.println("当前服务没有启动"+JSONArray.toJSON(server));
             return;
         }
         try {
             String string = JSONArray.toJSONString(server);
             String result = zooKeeper.create(MASTER_PATH, string.getBytes(), ZooDefs.Ids.
-                    OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+                    OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            System.out.println("创建master_path："+result);
             master = server;
-            System.out.println(master + "->我现在已经是master，你们要听我的");
+            System.out.println(master + "->我现在已经是master，你们要听我的"+JSONArray.toJSON(master));
             //定时器
             //master释放（master出现故障）每5秒释放一次
             scheduledExecutorService.schedule(() -> {
@@ -61,15 +64,14 @@ public class MasterSelector {
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (KeeperException e) {
-            e.printStackTrace();
             try {
                 //已经存在
                 Stat stat = new Stat();
-                byte[] data = zooKeeper.getData(MASTER_PATH, new MasterSelectorWatcher(), stat);
+                byte[] data = zooKeeper.getData(MASTER_PATH, new MasterSelector(), stat);
                 String json = new String(data);
                 UserCenter userCenter = JSONArray.parseObject(json, UserCenter.class);
                 if(userCenter==null){
-                    System.out.println("启动操作");
+                    System.out.println("启动操作"+JSONArray.toJSON(server));
                     checkIsMaster();
                 }else {
                     master = userCenter;
@@ -89,6 +91,7 @@ public class MasterSelector {
         if (checkIsMaster()) {
             try {
                 zooKeeper.delete(MASTER_PATH, -1);
+                System.out.println(JSONArray.toJSON(master)+"出现故障");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (KeeperException e) {
@@ -101,7 +104,7 @@ public class MasterSelector {
         //判断当前的server是不是master
         try {
             Stat stat = new Stat();
-            byte[] data = zooKeeper.getData(MASTER_PATH, new MasterSelectorWatcher(), stat);
+            byte[] data = zooKeeper.getData(MASTER_PATH, new MasterSelector(), stat);
             String json = new String(data);
             UserCenter userCenter = JSONArray.parseObject(json, UserCenter.class);
             if (userCenter.getMc_name().equals(server.getMc_name())) {
@@ -115,6 +118,21 @@ public class MasterSelector {
         }
         return false;
     }
-
+    @Override
+    public void process(WatchedEvent watchedEvent) {
+        switch (watchedEvent.getType()){
+            case NodeCreated:
+                System.out.println("");
+                break;
+            case NodeDeleted:
+                System.out.println("节点被删除，master断开连接，需要重新选举");
+                //此处调用选举算法
+                chooseMaster();
+                break;
+            case NodeDataChanged:
+                System.out.println("");
+                break;
+        }
+    }
 
 }

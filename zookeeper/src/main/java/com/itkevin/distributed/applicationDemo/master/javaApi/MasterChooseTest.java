@@ -16,7 +16,7 @@ public class MasterChooseTest {
         List<MasterSelector> selectorList = new ArrayList<>();
         try {
             for (int i = 0; i < 10; i++) {
-                ZooKeeper zooKeeper = new ZooKeeper(CONNECTSTRING, sessionTimeout, new MasterSelectorWatcher());
+                ZooKeeper zooKeeper = new ZooKeeper(CONNECTSTRING, sessionTimeout, new MasterSelector());
                 UserCenter userCenter = new UserCenter();
                 userCenter.setMc_id(i);
                 userCenter.setMc_name("客户端：" + i);
@@ -24,7 +24,6 @@ public class MasterChooseTest {
                 selectorList.add(masterSelector);
                 masterSelector.start();//触发选举
                 TimeUnit.SECONDS.sleep(1);
-
             }
 
         } catch (Exception e) {
