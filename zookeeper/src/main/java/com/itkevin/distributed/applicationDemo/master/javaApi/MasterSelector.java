@@ -8,13 +8,18 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class MasterSelector  implements Watcher{
+public class MasterSelector implements Watcher {
 
     private final static String MASTER_PATH = "/master"; //需要争抢的节点
+
     ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+
     private UserCenter server;  //其他服务器
+
     private UserCenter master;  //master节点
+
     private boolean isRunning = false;
+
     private ZooKeeper zooKeeper;
 
 
@@ -46,16 +51,16 @@ public class MasterSelector  implements Watcher{
 
     private void chooseMaster() {
         if (!isRunning) {
-            System.out.println("当前服务没有启动"+JSONArray.toJSON(server));
+            System.out.println("当前服务没有启动" + JSONArray.toJSON(server));
             return;
         }
         try {
             String string = JSONArray.toJSONString(server);
             String result = zooKeeper.create(MASTER_PATH, string.getBytes(), ZooDefs.Ids.
-                    OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-            System.out.println("创建master_path："+result);
+                    OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);//采用临时节点
+            System.out.println("创建master_path：" + result);
             master = server;
-            System.out.println(master + "->我现在已经是master，你们要听我的"+JSONArray.toJSON(master));
+            System.out.println(master + "->我现在已经是master，你们要听我的" + JSONArray.toJSON(master));
             //定时器
             //master释放（master出现故障）每5秒释放一次
             scheduledExecutorService.schedule(() -> {
@@ -70,10 +75,10 @@ public class MasterSelector  implements Watcher{
                 byte[] data = zooKeeper.getData(MASTER_PATH, new MasterSelector(), stat);
                 String json = new String(data);
                 UserCenter userCenter = JSONArray.parseObject(json, UserCenter.class);
-                if(userCenter==null){
-                    System.out.println("启动操作"+JSONArray.toJSON(server));
+                if (userCenter == null) {
+                    System.out.println("启动操作" + JSONArray.toJSON(server));
                     checkIsMaster();
-                }else {
+                } else {
                     master = userCenter;
                 }
             } catch (KeeperException e1) {
@@ -91,7 +96,7 @@ public class MasterSelector  implements Watcher{
         if (checkIsMaster()) {
             try {
                 zooKeeper.delete(MASTER_PATH, -1);
-                System.out.println(JSONArray.toJSON(master)+"出现故障");
+                System.out.println(JSONArray.toJSON(master) + "出现故障");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (KeeperException e) {
@@ -118,9 +123,10 @@ public class MasterSelector  implements Watcher{
         }
         return false;
     }
+
     @Override
     public void process(WatchedEvent watchedEvent) {
-        switch (watchedEvent.getType()){
+        switch (watchedEvent.getType()) {
             case NodeCreated:
                 System.out.println("");
                 break;
